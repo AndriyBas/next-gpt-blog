@@ -1,21 +1,13 @@
 import clientPromise from "@/client/mongo";
+import { MongoPost } from "@/data/MongoPost";
 import { faHashtag } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { ObjectId, WithId, Document } from "mongodb";
+import { ObjectId } from "mongodb";
 import { notFound } from "next/navigation";
 import * as React from "react";
 
 interface PostDetailProps {
   params: { postId: string };
-}
-
-interface Post extends WithId<Document> {
-  title: string;
-  keywords: string;
-  postContent: string;
-  metaDescription: string;
-  userId: ObjectId;
-  topic: string;
 }
 
 async function fetchPost(postId: string) {
@@ -29,7 +21,7 @@ async function fetchPost(postId: string) {
   const post = (await client
     .db()
     .collection("posts")
-    .findOne({ _id: objId })) as Post | null;
+    .findOne({ _id: objId })) as MongoPost | null;
   if (!post) {
     return notFound();
   }

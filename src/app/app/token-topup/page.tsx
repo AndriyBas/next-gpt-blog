@@ -8,6 +8,7 @@ const TokenTopupPage: React.FC = () => {
     });
     const data = await response.json();
     console.log("data: ", data);
+    window.location.href = data.session.url;
   };
   return (
     <div>
