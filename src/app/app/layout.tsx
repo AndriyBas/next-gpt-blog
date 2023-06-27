@@ -57,7 +57,15 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
           )}
         </div>
       </div>
-      <div>{children}</div>
+      <div>
+        {user ? (
+          children
+        ) : (
+          <p className="w-full text-center p-10">
+            {isLoading ? "Loading ..." : "Please, log in"}
+          </p>
+        )}
+      </div>
     </div>
   );
 }

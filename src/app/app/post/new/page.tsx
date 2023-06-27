@@ -1,7 +1,7 @@
 "use client";
 import * as React from "react";
 import { useUser } from "@auth0/nextjs-auth0/client";
-import { redirect } from "next/navigation";
+import { useRouter, redirect } from "next/navigation";
 
 interface Post {
   postContent: string;
@@ -11,7 +11,7 @@ interface Post {
 
 const NewPostPage: React.FC = () => {
   const { user, isLoading } = useUser();
-  const [post, setPost] = React.useState<Post | null>(null);
+  const router = useRouter();
   if (isLoading) {
     return <p>Loading...</p>;
   }
@@ -35,8 +35,10 @@ const NewPostPage: React.FC = () => {
       body: JSON.stringify({ topic, keywords, uid: user.sub }),
     });
     const json = await response.json();
-    setPost(json.post);
-    console.log(json);
+    console.log("json: ", json);
+    if (json?.post?._id) {
+      router.push(`/app/post/${json.post._id}`);
+    }
   };
 
   return (
@@ -68,12 +70,6 @@ const NewPostPage: React.FC = () => {
           Generate
         </button>
       </form>
-      {post && (
-        <div
-          className="max-w-screen-sm p-10"
-          dangerouslySetInnerHTML={{ __html: post.postContent }}
-        ></div>
-      )}
     </div>
   );
 };

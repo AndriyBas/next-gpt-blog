@@ -1,21 +1,51 @@
-"use client";
+import clientPromise from "@/client/mongo";
+import { ObjectId, WithId, Document } from "mongodb";
+import { notFound } from "next/navigation";
 import * as React from "react";
-import { useUser } from "@auth0/nextjs-auth0/client";
-import { redirect } from "next/navigation";
 
 interface PostDetailProps {
   params: { postId: string };
 }
 
-const PostDetail: React.FC<PostDetailProps> = ({ params: { postId } }) => {
-  const { user, isLoading } = useUser();
-  if (isLoading) {
-    return <p>Loading...</p>;
+interface Post extends WithId<Document> {
+  title: string;
+  keywords: string;
+  postContent: string;
+  metaDescription: string;
+  userId: ObjectId;
+  topic: string;
+}
+
+async function fetchPost(postId: string) {
+  const client = await clientPromise;
+  let objId: ObjectId;
+  try {
+    objId = new ObjectId(postId);
+  } catch (e) {
+    return notFound();
   }
-  if (!user) {
-    redirect("/");
+  const post = (await client
+    .db()
+    .collection("posts")
+    .findOne({ _id: objId })) as Post | null;
+  if (!post) {
+    return notFound();
   }
-  return <div>Post Detail page: {postId}</div>;
+  return post;
+}
+
+const PostDetail: React.FC<PostDetailProps> = async ({
+  params: { postId },
+}) => {
+  const post = await fetchPost(postId);
+  return (
+    <div>
+      <div>Post Detail page: {postId}</div>
+      <div>{post.title}</div>
+      <div>{post.metaDescription}</div>
+      <div>{post.postContent}</div>
+    </div>
+  );
 };
 
 export default PostDetail;
