@@ -18,7 +18,12 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
             New post
           </Link>
           <Link className="block mt-2 text-center" href="/app/token-topup">
-            <FontAwesomeIcon icon={faCoins} className="text-yellow-500" />
+            <FontAwesomeIcon
+              icon={faCoins}
+              className="text-yellow-500"
+              width={16}
+              height={16}
+            />
             <span className="pl-1">0 tokens available</span>
           </Link>
         </div>
@@ -57,15 +62,13 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
           )}
         </div>
       </div>
-      <div>
-        {user ? (
-          children
-        ) : (
-          <p className="w-full text-center p-10">
-            {isLoading ? "Loading ..." : "Please, log in"}
-          </p>
-        )}
-      </div>
+      {user ? (
+        children
+      ) : (
+        <p className="w-full text-center p-10">
+          {isLoading ? "Loading ..." : "Please, log in"}
+        </p>
+      )}
     </div>
   );
 }
