@@ -8,10 +8,19 @@ export async function POST(request: NextRequest) {
     keywords,
     uid,
   }: { topic?: string; keywords?: string; uid?: string } = await request.json();
-  if (!topic || !keywords || !uid) {
+  if (
+    !topic ||
+    !keywords ||
+    !uid ||
+    topic.length > 200 ||
+    keywords.length > 200
+  ) {
     return NextResponse.json(
-      { message: "Bad request. topic, keywords, uid are required" },
-      { status: 401 }
+      {
+        message:
+          "Bad request. topic, keywords, uid are required. Max length - 200 chars",
+      },
+      { status: 422 }
     );
   }
 

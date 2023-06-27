@@ -79,6 +79,9 @@ const NewPostPage: React.FC = () => {
                 defaultValue="Top 10 tips for dog owners"
                 name="topic"
                 id="topic"
+                required
+                minLength={5}
+                maxLength={200}
               />
             </div>
             <div>
@@ -90,6 +93,9 @@ const NewPostPage: React.FC = () => {
                 id="keywords"
                 defaultValue="first-time dog owners, common dog health issues, best dog breeds"
                 name="keywords"
+                required
+                minLength={5}
+                maxLength={200}
               />
             </div>
             <small className="block mb-2">Separate keywords with comma</small>
