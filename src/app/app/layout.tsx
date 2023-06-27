@@ -21,10 +21,12 @@ interface AppLayoutProps {
 export default function AppLayout({ children }: AppLayoutProps) {
   const { user, isLoading } = useUser();
   const [data, setData] = React.useState<Data | null>(null);
+  const [hasMore, setHasMore] = React.useState(true);
+
   const path = usePathname();
   const postId = path?.split("/").pop() ?? "";
 
-  console.log("postId:", postId);
+  // console.log("postId:", postId);
 
   React.useEffect(() => {
     fetch("/api/me")
@@ -34,6 +36,31 @@ export default function AppLayout({ children }: AppLayoutProps) {
         setData(d);
       });
   }, []);
+
+  const onLoadMoreClick = () => {
+    fetch("/api/posts", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        lastPostDate: data?.posts[data.posts.length - 1].createdAt,
+      }),
+    })
+      .then((r) => r.json())
+      .then((d) => {
+        console.log("new data page: ", d);
+        const newPosts: Post[] = d.posts || [];
+        setData((old) => ({
+          ...old!,
+          posts: [...old!.posts, ...newPosts],
+        }));
+        if (!newPosts.length) {
+          setHasMore(false);
+        }
+      });
+    console.log("load more");
+  };
 
   return (
     <div className="grid grid-cols-[300px_1fr] h-screen max-h-screen">
@@ -70,6 +97,14 @@ export default function AppLayout({ children }: AppLayoutProps) {
                 {p.topic}
               </Link>
             ))}
+          {hasMore && (
+            <small
+              className="block w-full text-center p-2 cursor-pointer hover:underline text-slate-400 text-sm"
+              onClick={onLoadMoreClick}
+            >
+              Load more
+            </small>
+          )}
         </div>
         <div className="bg-cyan-800 flex flex-row items-center gap-2 border-t border-t-black/50 h-20 px-2">
           {isLoading ? (

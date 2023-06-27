@@ -6,6 +6,8 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
+  const { lastPostDate } = req.body;
+
   const session = await getSession(req, res);
   if (!session?.user) {
     return res.status(401).json({ message: "Not authorized, no session" });
@@ -23,8 +25,8 @@ export default async function handler(
   const posts = await client
     .db()
     .collection("posts")
-    .find({ userId: mongoUser._id })
-    .limit(2)
+    .find({ userId: mongoUser._id, createdAt: { $lt: new Date(lastPostDate) } })
+    .limit(1)
     .sort({
       createdAt: -1,
     })
