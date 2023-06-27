@@ -1,8 +1,17 @@
 import { UserProvider } from "@auth0/nextjs-auth0/client";
-import { Inter } from "next/font/google";
+import { DM_Sans, DM_Serif_Display } from "next/font/google";
 import "./globals.css";
 
-const inter = Inter({ subsets: ["latin"] });
+const dmSans = DM_Sans({
+  weight: ["400", "500", "700"],
+  subsets: ["latin"],
+  variable: "--font-dm-sans",
+});
+const dmSerifDisplay = DM_Serif_Display({
+  weight: ["400"],
+  subsets: ["latin"],
+  variable: "--font-dm-serif",
+});
 
 export const metadata = {
   title: "Blog Standard",
@@ -16,8 +25,12 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={inter.className}>
-        <UserProvider>{children}</UserProvider>
+      <body
+        className={`${dmSans.className} ${dmSans.variable} ${dmSerifDisplay.variable}`}
+      >
+        <main>
+          <UserProvider>{children}</UserProvider>
+        </main>
       </body>
     </html>
   );
